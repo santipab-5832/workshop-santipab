@@ -2,6 +2,21 @@ var express = require('express');
 var router = express.Router();
 var userSchema = require('../models/user.model');
 const { Schema } = require('mongoose');
+const multer = require('multer');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const tokenMiddleware = require('../middleware/token.middleware')
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb){
+    cb(null, './public/images')
+  },
+  filename: function (req, file, cb){
+    cb(null, new Date().getTime() + "_" + file.originalname)
+  }
+})
+
+const upload = multer({ storage: storage })
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
@@ -9,16 +24,20 @@ router.get('/', async function(req, res, next) {
   res.send(users);
 });
 
-router.post('/', async function(req, res, next) {
-  let { name, age } = req.body;
+router.post('/', [tokenMiddleware, upload.single('image')], async function(req, res, next) {
+  let { name, age, password } = req.body;
 
   let user = new userSchema({
-    name,
-    age
+    name: name,
+    age: age,
+    password: await bcrypt.hash(password, 10)
   })
 
-  await user.save();
-  res.send("insert success!");
+  let token = await jwt.sign({ foo: "bar" }, "1234")
+
+  // await user.save();
+  // res.send("insert success!");
+  res.send(token);
 });
 
 router.put('/:id', async function(req, res, next) {

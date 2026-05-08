@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const userSchema = new Schema({
+const orderSchema = new Schema({
     name: { type: String },
-    age: { type: Number },
-    password: { type: String }
+    age: { type: Number }
 }, {
     timestamps: true    // creatAt, updateAt
 })
