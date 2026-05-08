@@ -3,7 +3,8 @@ const {Schema} = mongoose;
 
 const productSchema = new Schema({
     name: { type: String },
-    price: { type: Number }
+    price: { type: Number },
+    stock: { type: Number }
 }, {
     timestamps: true    // creatAt, updateAt
 })

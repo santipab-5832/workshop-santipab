@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var userSchema = require('../models/user.model');
-const { Schema } = require('mongoose');
+//var userSchema = require('../models/user.model');
+//const { Schema } = require('mongoose');
 const multer = require('multer');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenMiddleware = require('../middleware/token.middleware')
+const userController = require('../controller/user.controller')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb){
@@ -18,43 +19,37 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
+
+// จัดการข้อมูลผู้ใช้ CRUD
 /* GET users listing. */
-router.get('/', async function(req, res, next) {
-  let users = await userSchema.find({})
-  res.send(users);
-});
+router.get('/', userController.listUser);
 
-router.post('/', [tokenMiddleware, upload.single('image')], async function(req, res, next) {
-  let { name, age, password } = req.body;
+/* GET users ผ่าน ID */
+router.get('/:id', userController.listUserById);
 
-  let user = new userSchema({
-    name: name,
-    age: age,
-    password: await bcrypt.hash(password, 10)
-  })
+router.post('/', userController.addUser);
 
-  let token = await jwt.sign({ foo: "bar" }, "1234")
+// router.post('/', [tokenMiddleware, upload.single('image')], async function(req, res, next) {
+//   let { name, age, password } = req.body;
 
-  // await user.save();
-  // res.send("insert success!");
-  res.send(token);
-});
+//   let user = new userSchema({
+//     name: name,
+//     age: age,
+//     password: await bcrypt.hash(password, 10)
+//   })
 
-router.put('/:id', async function(req, res, next) {
-  let { name, age } = req.body;
-  let { id } = req.params;
+//   let token = await jwt.sign({ foo: "bar" }, "1234")
 
-  let user = await userSchema.findByIdAndUpdate(id, { name, age }, { new: true })
+//   // await user.save();
+//   // res.send("insert success!");
+//   res.send(token);
+// });
 
-  res.send("update success!");
-});
+router.put('/:id', userController.editUser);
 
-router.delete('/:id', async function(req, res, next) {
-  let { id } = req.params;
+router.patch('/:id', userController.patchUser);
 
-  let user = await userSchema.findByIdAndDelete(id)
+router.delete('/:id', userController.deleteUser);
 
-  res.send(`${user} Deleted`);
-});
 
 module.exports = router;
