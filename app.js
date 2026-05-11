@@ -8,9 +8,10 @@ require('dotenv').config();
 require('./db');
 
 var indexRouter = require('./routes/index');
+var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
-var productsRouter = require('./routes/products')
-var ordersRouter = require('./routes/orders')
+var productsRouter = require('./routes/products');
+var ordersRouter = require('./routes/orders');
 
 var app = express();
 app.use(cors());
@@ -26,9 +27,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/products', productsRouter)
-app.use('/orders', ordersRouter)
+app.use('/api/v1', authRouter);
+app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/products', productsRouter)
+app.use('/api/v1/orders', ordersRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

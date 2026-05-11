@@ -26,30 +26,12 @@ router.get('/:id', verifyToken, userController.listUserById);
 
 router.post('/', [verifyToken, isAdmin], userController.addUser);
 
-// router.post('/', [tokenMiddleware, upload.single('image')], async function(req, res, next) {
-//   let { name, age, password } = req.body;
-
-//   let user = new userSchema({
-//     name: name,
-//     age: age,
-//     password: await bcrypt.hash(password, 10)
-//   })
-
-//   let token = await jwt.sign({ foo: "bar" }, "1234")
-
-//   // await user.save();
-//   // res.send("insert success!");
-//   res.send(token);
-// });
-
 router.put('/:id', verifyToken, userController.editUser);
 
 router.patch('/:id', verifyToken, userController.patchUser);
 
 router.delete('/:id', [verifyToken, isAdmin], userController.deleteUser);
 
-router.post('/register', userController.register);
-router.post('/login', userController.login);
 router.put('/:id/approve', [verifyToken, isAdmin], userController.approveUser)
 
 

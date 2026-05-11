@@ -12,8 +12,7 @@ exports.getOrders = async function (req, res, next) {
 
 exports.getOrdersByProduct = async function (req, res, next) {
     try{
-        console.log(req.params)
-        let { productId } = req.params;
+        let { id } = req.params;
 
         let order = await orderSchema.find({ productId: productId });
         res.status(200).send(order)
@@ -24,18 +23,19 @@ exports.getOrdersByProduct = async function (req, res, next) {
 
 exports.addOrder = async function (req, res, next) {
     try{
-        let { userId, productId, quantity } = req.body;
-        let product = await productSchema.findById(productId);
+        let { id } = req.params;
+        let { userId, quantity } = req.body;
+        let product = await productSchema.findById(id);
 
         if (quantity > product.stock) {
-            return res.status(400).send("จำนวนสินค้าเกินสต็อก");
+            return res.status(400).send("ไม่สามารถเพิ่ม Order ได้");
         }
 
-        let order = new orderSchema({ userId, productId, quantity });
+        let order = new orderSchema({ userId, productId: id, quantity });
         await order.save();
 
-        await productSchema.findByIdAndUpdate(productId, { $inc: { stock: -quantity } });
-        res.status(201).send(order)
+        await productSchema.findByIdAndUpdate(id, { $inc: { stock: -quantity } });
+        res.status(201).send(order);
     } catch(error){
         res.status(500).send(error)
     }
