@@ -51,5 +51,9 @@ router.patch('/:id', userController.patchUser);
 
 router.delete('/:id', userController.deleteUser);
 
+router.post('/register', userController.register);
+router.post('/login', userController.login);
+router.put('/:id/approve', userController.approveUser)
+
 
 module.exports = router;
