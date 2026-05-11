@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
 const jwt = require('jsonwebtoken');
-const productController = require('../controller/products.controller')
+const { verifyToken, isAdmin } = require('../middleware/token.middleware');
+const productController = require('../controller/products.controller');
 
-router.get('/', productController.getProducts);
-router.get('/:id', productController.getProductsById);
-router.post('/', productController.createProduct);
-router.put('/:id', productController.editProduct);
-router.patch('/:id', productController.editProductById);
-router.delete('/:id', productController.deleteProduct);
+router.get('/', verifyToken, productController.getProducts);
+router.get('/:id', verifyToken, productController.getProductsById);
+router.post('/',  [verifyToken, isAdmin], productController.createProduct);
+router.put('/:id', [verifyToken, isAdmin], productController.editProduct);
+router.patch('/:id', [verifyToken, isAdmin], productController.editProductById);
+router.delete('/:id', [verifyToken, isAdmin], productController.deleteProduct);
 
 
 module.exports = router;

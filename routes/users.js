@@ -1,12 +1,9 @@
 var express = require('express');
 var router = express.Router();
-//var userSchema = require('../models/user.model');
-//const { Schema } = require('mongoose');
 const multer = require('multer');
-//const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const tokenMiddleware = require('../middleware/token.middleware')
-const userController = require('../controller/user.controller')
+const { verifyToken, isAdmin } = require('../middleware/token.middleware');
+const userController = require('../controller/user.controller');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb){
@@ -22,12 +19,12 @@ const upload = multer({ storage: storage })
 
 // จัดการข้อมูลผู้ใช้ CRUD
 /* GET users listing. */
-router.get('/', userController.listUser);
+router.get('/', verifyToken, userController.listUser);
 
 /* GET users ผ่าน ID */
-router.get('/:id', userController.listUserById);
+router.get('/:id', verifyToken, userController.listUserById);
 
-router.post('/', userController.addUser);
+router.post('/', [verifyToken, isAdmin], userController.addUser);
 
 // router.post('/', [tokenMiddleware, upload.single('image')], async function(req, res, next) {
 //   let { name, age, password } = req.body;
@@ -45,15 +42,15 @@ router.post('/', userController.addUser);
 //   res.send(token);
 // });
 
-router.put('/:id', userController.editUser);
+router.put('/:id', verifyToken, userController.editUser);
 
-router.patch('/:id', userController.patchUser);
+router.patch('/:id', verifyToken, userController.patchUser);
 
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', [verifyToken, isAdmin], userController.deleteUser);
 
 router.post('/register', userController.register);
 router.post('/login', userController.login);
-router.put('/:id/approve', userController.approveUser)
+router.put('/:id/approve', [verifyToken, isAdmin], userController.approveUser)
 
 
 module.exports = router;
