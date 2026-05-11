@@ -5,7 +5,7 @@ const { verifyToken, isAdmin } = require('../middleware/token.middleware');
 var orderController = require('../controller/order.controller');
 
 router.get('/', verifyToken, orderController.getOrders)
-router.get('/:id', verifyToken, orderController.getOrdersByProduct);
+router.get('/:productId', verifyToken, orderController.getOrdersByProduct);
 router.post('/', verifyToken, orderController.addOrder);
 
 module.exports = router;

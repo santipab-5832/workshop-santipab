@@ -12,6 +12,7 @@ exports.getOrders = async function (req, res, next) {
 
 exports.getOrdersByProduct = async function (req, res, next) {
     try{
+        console.log(req.params)
         let { productId } = req.params;
 
         let order = await orderSchema.find({ productId: productId });
