@@ -8,7 +8,6 @@
           <th>Product ID</th>
           <th>User ID</th>
           <th>จำนวน</th>
-          <th>สถานะ</th>
         </tr>
       </thead>
 
@@ -17,7 +16,6 @@
           <td>{{ order.productId }}</td>
           <td>{{ order.userId }}</td>
           <td>{{ order.quantity }}</td>
-          <td>{{ order.status }}</td>
         </tr>
       </tbody>
     </v-simple-table>
