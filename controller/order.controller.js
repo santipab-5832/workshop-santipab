@@ -6,7 +6,7 @@ exports.getOrders = async function (req, res, next) {
         let order = await orderSchema.find({})
         res.status(200).json({
             status: 200,
-            message: 'สินค้าทั้งหมด',
+            message: 'Success',
             data: order
         });
     } catch(error){
@@ -21,7 +21,7 @@ exports.getOrdersByProduct = async function (req, res, next) {
         let order = await orderSchema.find({ productId: productId });
         res.status(200).json({
             status: 200,
-            message: 'นี่คือสินค้าของคุณ',
+            message: 'Success',
             data: order
         });
     } catch(error){
@@ -45,7 +45,7 @@ exports.addOrder = async function (req, res, next) {
         await productSchema.findByIdAndUpdate(id, { $inc: { stock: -quantity } });
         res.status(201).json({
             status: 201,
-            message: 'เพิ่มสินค้า!',
+            message: 'Added order!',
             data: order
         });
     } catch(error){
