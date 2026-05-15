@@ -6,8 +6,13 @@ export default {
   },
 
   create(productId, quantity) {
-    return api.post(`/orders/${productId}`, {
-      quantity,
-    });
+    return api.post(`/orders/${productId}`, { quantity });
+  },
+  updateStatus(id, status) {
+    return api.patch(`/orders/${id}/status`, { status });
+  },
+
+  remove(id) {
+    return api.delete(`/orders/${id}`);
   },
 };
