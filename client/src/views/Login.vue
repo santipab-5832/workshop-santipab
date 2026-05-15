@@ -1,51 +1,87 @@
 <template>
-  <div>
-    <h1>helloWorld</h1>
-    <h1>{{ name }}</h1>
-    <v-btn color="success" @click="show = !show">switch</v-btn>
-    <div v-if="show">
-        <CardImg />
-    </div>
-    <!-- <h1 v-for="(item, index) in item" :key="index">
-            {{ item }}
-    </h1> -->
-    <v-row>
-        <v-col cols="3" v-for="(item, index) in item" :key="index">
-            <div>
-                <v-card width="350">
-                <v-img :src="item.imgLink"></v-img>
-                <v-card-title primary-title>
-                    {{ item.message }}
-                </v-card-title>  
-                </v-card>
-            </div>
-        </v-col>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="5">
+        <v-card class="pa-5" elevation="4">
+          <v-card-title class="justify-center"> Login </v-card-title>
+
+          <v-card-text>
+            <v-text-field
+              label="Username"
+              v-model="username"
+              prepend-icon="mdi-account"
+            ></v-text-field>
+
+            <v-text-field
+              label="Password"
+              v-model="password"
+              prepend-icon="mdi-lock"
+              type="password"
+              @keyup.enter="login"
+            ></v-text-field>
+
+            <v-alert v-if="errorMessage" type="error" dense>
+              {{ errorMessage }}
+            </v-alert>
+
+            <v-alert v-if="successMessage" type="success" dense>
+              {{ successMessage }}
+            </v-alert>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-btn color="primary" block @click="login"> Login </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>
-import CardImg from '../components/CardImg.vue'
+import api from "@/services/api";
+
 export default {
-    components:{
-        CardImg
-    },
-    data(){
-        return {
-            name: "Santipab",
-            show: false,
-            item: [
-                { message: 'foo', imgLink: 'https://thnic.or.th/wp-content/uploads/2019/12/1_Uuo3NVsm1IjgpcBKG52jxw.png' }, 
-                { message: 'bar', imgLink: 'https://thnic.or.th/wp-content/uploads/2019/12/1_Uuo3NVsm1IjgpcBKG52jxw.png' },
-                { message: 'bar', imgLink: 'https://thnic.or.th/wp-content/uploads/2019/12/1_Uuo3NVsm1IjgpcBKG52jxw.png' },
-                { message: 'bar', imgLink: 'https://thnic.or.th/wp-content/uploads/2019/12/1_Uuo3NVsm1IjgpcBKG52jxw.png' },
-                { message: 'bar', imgLink: 'https://thnic.or.th/wp-content/uploads/2019/12/1_Uuo3NVsm1IjgpcBKG52jxw.png' }
-            ]
+  data() {
+    return {
+      username: "",
+      password: "",
+      errorMessage: "",
+      successMessage: "",
+    };
+  },
+
+  methods: {
+    async login() {
+      this.errorMessage = "";
+      this.successMessage = "";
+
+      if (!this.username || !this.password) {
+        this.errorMessage = "กรุณากรอก username และ password";
+        return;
+      }
+
+      try {
+        const response = await api.post("/login", {
+          username: this.username,
+          password: this.password,
+        });
+
+        const token = response.data.data;
+
+        localStorage.setItem("token", token);
+
+        this.successMessage = "Login สำเร็จ";
+
+        this.$router.push("/products");
+      } catch (error) {
+        if (error.response) {
+          this.errorMessage = error.response.data.message || "Login ไม่สำเร็จ";
+        } else {
+          this.errorMessage = "ไม่สามารถเชื่อมต่อ Server ได้";
         }
-    }
-}
+      }
+    },
+  },
+};
 </script>
-
-<style>
-
-</style>
