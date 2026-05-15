@@ -6,6 +6,6 @@ var orderController = require('../controller/order.controller');
 
 router.get('/', verifyToken, orderController.getOrders)
 router.get('/:productId', verifyToken, orderController.getOrdersByProduct);
-router.post('/', verifyToken, orderController.addOrder);
+router.post('/:id', verifyToken, orderController.addOrder);
 
 module.exports = router;
