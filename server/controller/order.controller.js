@@ -58,3 +58,63 @@ exports.addOrder = async function (req, res, next) {
     res.status(500).send(error);
   }
 };
+
+exports.updateOrderStatus = async function (req, res, next) {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const allowedStatus = ["pending", "success", "cancel"];
+
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid status",
+      });
+    }
+
+    const order = await orderSchema.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true },
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        status: 404,
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "Updated order status!",
+      data: order,
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+exports.deleteOrder = async function (req, res, next) {
+  try {
+    const { id } = req.params;
+
+    const order = await orderSchema.findByIdAndDelete(id);
+
+    if (!order) {
+      return res.status(404).json({
+        status: 404,
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "Deleted order!",
+      data: order,
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
